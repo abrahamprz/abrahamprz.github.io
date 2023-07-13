@@ -40,6 +40,11 @@ function App() {
     return theme === 'dark' ? linkedinDarkLogo : linkedinLightLogo;
   };
 
+  const handleThemeChange = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+  };
+
   return (
     <div className="container">
       <div>
@@ -55,6 +60,13 @@ function App() {
       </div>
       <div className="counter">
         <ClickCounter />
+      </div>
+      <div className="toggle">
+        <label>
+          <input type="checkbox" checked={theme === 'dark'} onChange={handleThemeChange} />
+          {theme === 'dark' ? t('toggle.light') : t('toggle.dark')}
+          {/* Change to icons? */}
+        </label>
       </div>
       <div className="references">
         {t('references.iconsBy')} <a href="https://icons8.com" target="_blank" rel="noopener noreferrer">Icons8</a>

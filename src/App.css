@@ -39,3 +39,46 @@
   right: 0;
   margin: auto;
 }
+.toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.toggle label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.toggle input[type="checkbox"] {
+  appearance: none;
+  width: 2.5rem;
+  height: 1.5rem;
+  border-radius: 1rem;
+  background-color: #ccc;
+  position: relative;
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+.toggle input[type="checkbox"]:checked {
+  background-color: #2196f3;
+}
+
+.toggle input[type="checkbox"]::before {
+  content: '';
+  position: absolute;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: #fff;
+  left: 0.1rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.toggle input[type="checkbox"]:checked::before {
+  transform: translateX(1.1rem);
+}
