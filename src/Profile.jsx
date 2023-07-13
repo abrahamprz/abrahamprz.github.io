@@ -1,15 +1,14 @@
-// Removed unused import statement
-// import React from 'react'
+import { useTranslation } from "react-i18next"
 
 function Profile() {
+  const { t } = useTranslation()
+
   return (
     <div>
-      <h1>Abraham Pérez</h1>
+      <h1>{t('profile.name')}</h1>
       <div className="presentation">
-        <h2>About me</h2>
-        <p>
-          Computer Engineer / Software Developer interested in AI and videogames.
-        </p>
+        <h2>{t('profile.aboutMe')}</h2>
+        <p>{t('profile.aboutMeText')}</p>
       </div>
     </div>
   )
