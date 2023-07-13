@@ -1,2 +1,2 @@
 # abrahamprz.github.io
-Website that displays relevant information about abrahamprz
+Website that displays information about abrahamprz
