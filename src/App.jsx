@@ -1,18 +1,47 @@
-import githublogo from './assets/github_dark_theme.svg';
-import linkedinlogo from './assets/linkedin_dark_theme.svg';
+import { useEffect, useState } from 'react';
+import githubLightLogo from './assets/github_light_theme.svg';
+import githubDarkLogo from './assets/github_dark_theme.svg';
+import linkedinLightLogo from './assets/linkedin_light_theme.svg';
+import linkedinDarkLogo from './assets/linkedin_dark_theme.svg';
 import ClickCounter from './ClickCounter';
 import Profile from './Profile';
 import './App.css';
 
 function App() {
+  const [theme, setTheme] = useState('light'); // Default theme is 'light', but you can change it if needed
+
+  useEffect(() => {
+    // Detect the browser theme
+    const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleThemeChange = (event) => {
+      const newTheme = event.matches ? 'dark' : 'light';
+      setTheme(newTheme);
+    };
+
+    darkModeQuery.addListener(handleThemeChange);
+    setTheme(darkModeQuery.matches ? 'dark' : 'light');
+
+    return () => {
+      darkModeQuery.removeListener(handleThemeChange);
+    };
+  }, []);
+
+  const getGithubLogoPath = () => {
+    return theme === 'dark' ? githubDarkLogo : githubLightLogo;
+  };
+
+  const getLinkedinLogoPath = () => {
+    return theme === 'dark' ? linkedinDarkLogo : linkedinLightLogo;
+  };
+
   return (
     <div className="container">
       <div>
         <a href="https://github.com/abrahamprz" target="_blank" rel="noopener noreferrer">
-          <img src={githublogo} className="logo logo--github" alt="GitHub logo" />
+          <img src={getGithubLogoPath()} className="logo logo--github" alt="GitHub logo" />
         </a>
         <a href="https://www.linkedin.com/in/fcoabrahamprz/" target="_blank" rel="noopener noreferrer">
-          <img src={linkedinlogo} className="logo logo--linkedin" alt="LinkedIn logo" />
+          <img src={getLinkedinLogoPath()} className="logo logo--linkedin" alt="LinkedIn logo" />
         </a>
       </div>
       <div>
