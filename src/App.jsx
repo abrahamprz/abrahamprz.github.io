@@ -22,6 +22,7 @@ function App() {
         <ClickCounter />
       </div>
       <div className="references">
+        <a href="https://icons8.com/icon/84862/contacts" target="_blank" rel="noopener noreferrer">Contact</a>,{' '}
         <a href="https://icons8.com/icon/16318/github" target="_blank" rel="noopener noreferrer">GitHub</a>,{' '}
         <a href="https://icons8.com/icon/98960/linkedin" target="_blank" rel="noopener noreferrer">LinkedIn</a>{' '}
         icons by <a href="https://icons8.com" target="_blank" rel="noopener noreferrer">Icons8</a>
