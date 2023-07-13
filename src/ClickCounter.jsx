@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from "react-i18next"
+
 
 function ClickCounter() {
+  const { t } = useTranslation()
   const [count, setCount] = useState(0)
 
   useEffect(() => {
@@ -17,7 +20,7 @@ function ClickCounter() {
 
   return (
     <div>
-      <p>Clicks: {count}</p>
+      <p>{t('clickCounter.clicks')} {count}</p>
     </div>
   )
 }
