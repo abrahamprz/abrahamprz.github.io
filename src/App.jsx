@@ -1,35 +1,33 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import githublogo from './assets/github_dark_theme.svg';
+import linkedinlogo from './assets/linkedin_dark_theme.svg';
+import ClickCounter from './ClickCounter';
+import Profile from './Profile';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
+    <div className="container">
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
+        <a href="https://github.com/abrahamprz" target="_blank" rel="noopener noreferrer">
+          <img src={githublogo} className="logo logo--github" alt="GitHub logo" />
         </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
+        <a href="https://www.linkedin.com/in/fcoabrahamprz/" target="_blank" rel="noopener noreferrer">
+          <img src={linkedinlogo} className="logo logo--linkedin" alt="LinkedIn logo" />
         </a>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+      <div>
+        <Profile />
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      <div className="counter">
+        <ClickCounter />
+      </div>
+      <div className="references">
+        <a href="https://icons8.com/icon/16318/github" target="_blank" rel="noopener noreferrer">GitHub</a>,{' '}
+        <a href="https://icons8.com/icon/98960/linkedin" target="_blank" rel="noopener noreferrer">LinkedIn</a>{' '}
+        icons by <a href="https://icons8.com" target="_blank" rel="noopener noreferrer">Icons8</a>
+      </div>
+    </div>
+  );
 }
 
-export default App
+export default App;

@@ -11,32 +11,31 @@
   will-change: filter;
   transition: filter 300ms;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+
+.logo--github {
+  --shadow-color: #6e5494;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.logo--linkedin {
+  --shadow-color: #0077b5;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.logo--github:hover {
+  filter: drop-shadow(0 0 2em var(--shadow-color));
 }
 
-.card {
+.logo--linkedin:hover {
+  filter: drop-shadow(0 0 2em var(--shadow-color));
+}
+
+.counter {
   padding: 2em;
 }
 
-.read-the-docs {
-  color: #888;
+.references {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
 }
