@@ -8,7 +8,7 @@ import Profile from './Profile';
 import './App.css';
 
 function App() {
-  const [theme, setTheme] = useState('light'); // Default theme is 'light', but you can change it if needed
+  const [theme, setTheme] = useState('light'); // Default theme is 'light'
 
   useEffect(() => {
     // Detect the browser theme
@@ -18,11 +18,11 @@ function App() {
       setTheme(newTheme);
     };
 
-    darkModeQuery.addListener(handleThemeChange);
+    darkModeQuery.addEventListener('change', handleThemeChange);
     setTheme(darkModeQuery.matches ? 'dark' : 'light');
 
     return () => {
-      darkModeQuery.removeListener(handleThemeChange);
+      darkModeQuery.addEventListener('change', handleThemeChange);
     };
   }, []);
 
