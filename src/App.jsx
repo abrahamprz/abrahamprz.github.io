@@ -45,6 +45,14 @@ function App() {
     setTheme(newTheme);
   };
 
+  useEffect(() => {
+    // Set the body background color based on the current theme
+    let darkColor = '#1c1c1c';
+    let whiteColor = '#f5f5f5';
+    document.body.style.backgroundColor = theme === 'dark' ? darkColor : whiteColor;
+    document.body.style.color = theme === 'dark' ? whiteColor : darkColor;
+  }, [theme]);
+
   return (
     <div className="container">
       <div>
