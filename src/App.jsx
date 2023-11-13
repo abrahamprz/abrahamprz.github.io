@@ -3,7 +3,6 @@ import githubLightLogo from './assets/github_light_theme.svg';
 import githubDarkLogo from './assets/github_dark_theme.svg';
 import linkedinLightLogo from './assets/linkedin_light_theme.svg';
 import linkedinDarkLogo from './assets/linkedin_dark_theme.svg';
-import ClickCounter from './ClickCounter';
 import Profile from './Profile';
 import './i18n';
 import './App.css';
@@ -66,13 +65,10 @@ function App() {
       <div>
         <Profile />
       </div>
-      <div className="counter">
-        <ClickCounter />
-      </div>
       <div className="toggle">
         <label>
           <input type="checkbox" checked={theme === 'dark'} onChange={handleThemeChange} />
-          {theme === 'dark' ? t('toggle.light') : t('toggle.dark')}
+          {theme === 'dark' ? t('☀️') : t('🌑')}
           {/* Change to icons? */}
         </label>
       </div>
