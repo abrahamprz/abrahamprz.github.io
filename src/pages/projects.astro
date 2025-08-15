@@ -1,0 +1,92 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ContentWrapper from '../components/ContentWrapper.astro';
+
+const githubProjects = [
+  // {
+  //   title: "Project One",
+  //   description: "Description for project one.",
+  //   url: "https://github.com/abrahamprz/project-one"
+  // },
+];
+
+const pico8Projects = [
+  // {
+  //   title: "Pico-8 Game One",
+  //   description: "Description for Pico-8 game one.",
+  //   url: "https://www.lexaloffle.com/bbs/?tid=12345"
+  // },
+];
+
+const title = "Projects";
+const description = "Here are some of the projects I've worked on.";
+const githubProjectsTitle = "GitHub Projects";
+const pico8ProjectsTitle = "Pico-8 Games";
+const emptyMessage = "More projects coming soon. Check back later!";
+---
+<Layout>
+  <ContentWrapper>
+    <h1 class="text-4xl font-extrabold text-sky-700 dark:text-sky-200 mb-2">
+      {title}
+    </h1>
+    <p class="text-lg text-neutral-700 dark:text-slate-300 mb-12">
+      {description}
+    </p>
+
+    <section>
+      <h2 class="text-2xl font-bold mb-6 text-sky-700 dark:text-sky-300">
+        {githubProjectsTitle}
+      </h2>
+      {githubProjects.length > 0 ? (
+        <ul class="space-y-6">
+          {githubProjects.map(project => (
+            <li>
+              <a href={project.url} target="_blank" rel="noopener noreferrer" class="block p-6 border border-neutral-200 dark:border-neutral-800 rounded-lg hover:shadow-lg hover:bg-slate-50 dark:hover:bg-neutral-800/50 transition-all duration-300">
+                <div class="text-xl font-semibold text-sky-700 dark:text-sky-300">
+                  {project.title}
+                </div>
+                <p class="text-neutral-700 dark:text-neutral-300 mt-2">
+                  {project.description}
+                </p>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="border-2 border-dashed border-neutral-300 dark:border-neutral-700 rounded-lg p-8 text-center">
+          <p class="text-neutral-500 dark:text-neutral-400 italic">
+            {emptyMessage}
+          </p>
+        </div>
+      )}
+    </section>
+
+    <section class="mt-16">
+      <h2 class="text-2xl font-bold mb-6 text-sky-700 dark:text-sky-300">
+        {pico8ProjectsTitle}
+      </h2>
+      {pico8Projects.length > 0 ? (
+        <ul class="space-y-6">
+          {pico8Projects.map(game => (
+            <li>
+              <a href={game.url} target="_blank" rel="noopener noreferrer" class="block p-6 border border-neutral-200 dark:border-neutral-800 rounded-lg hover:shadow-lg hover:bg-slate-50 dark:hover:bg-neutral-800/50 transition-all duration-300">
+                <div class="text-xl font-semibold text-sky-700 dark:text-sky-300">
+                  {game.title}
+                </div>
+                <p class="text-neutral-700 dark:text-neutral-300 mt-2">
+                  {game.description}
+                </p>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="border-2 border-dashed border-neutral-300 dark:border-neutral-700 rounded-lg p-8 text-center">
+          <p class="text-neutral-500 dark:text-neutral-400 italic">
+            {emptyMessage}
+          </p>
+        </div>
+      )}
+    </section>
+  </ContentWrapper>
+</Layout>

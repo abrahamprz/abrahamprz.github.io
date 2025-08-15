@@ -1,0 +1,57 @@
+---
+import {
+	base,
+} from "astro:config/server";
+---
+<nav class="w-full relative flex justify-center gap-6 py-4 px-8">
+  <a href={base} class="hover:underline">Home</a>
+  <a href={base + "projects"} class="hover:underline">Projects</a>
+  <a href={base + "about"} class="hover:underline">About</a>
+  <a href={base + "blog"} class="hover:underline">Blog</a>
+
+  <div class="absolute right-8 top-1/2 -translate-y-1/2">
+    <button
+      id="theme-toggle"
+      type="button"
+      class="w-14 h-8 flex items-center bg-gray-200 dark:bg-gray-700 rounded-full p-1 transition-colors duration-300 focus:outline-none"
+      aria-label="Toggle dark mode"
+    >
+      <span
+        id="toggle-thumb"
+        class="inline-flex items-center justify-center w-6 h-6 bg-white dark:bg-gray-900 rounded-full shadow transform"
+      >
+        <i id="toggle-icon" class="fas"></i>
+      </span>
+    </button>
+  </div>
+</nav>
+
+<script>
+  const html = document.documentElement;
+  const btn = document.getElementById('theme-toggle');
+  const thumb = document.getElementById('toggle-thumb');
+  const icon = document.getElementById('toggle-icon');
+
+  function updateToggleUI(isDark) {
+    if (isDark) {
+      thumb.style.transform = 'translateX(24px)';
+      icon.className = 'fas fa-moon text-yellow-400';
+    } else {
+      thumb.style.transform = 'translateX(0)';
+      icon.className = 'fas fa-sun text-gray-700';
+    }
+  }
+
+  const initialIsDark = html.classList.contains('dark');
+  updateToggleUI(initialIsDark);
+
+  requestAnimationFrame(() => {
+    thumb.classList.add('transition-transform', 'duration-300');
+  });
+
+  btn.addEventListener('click', () => {
+    const isDark = html.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    updateToggleUI(isDark);
+  });
+</script>

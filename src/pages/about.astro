@@ -1,0 +1,52 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ContentWrapper from '../components/ContentWrapper.astro';
+
+const identity = {
+  firstName: "Francisco",
+  middleName: "Abraham",
+  lastName: "Perez",
+  country: "the United States",
+  profession: "Computer Engineer",
+  hobbies: ["coding", "gaming", "music", "game development"],
+  skills: ["Python", "Django", "Godot", "Lua", "Docker"],
+}
+const title = "About me";
+const aboutIntro = `
+  Hello! I'm ${identity.middleName} Perez, a ${identity.profession} based in ${identity.country} 
+  with a passion for game development, art, and web technologies. 
+  When I'm not coding, I enjoy ${identity.hobbies.slice(0, -1).join(", ")}, and ${identity.hobbies.slice(-1)}. 
+  I'm always eager to learn new things and take on challenging projects.
+`;
+const skillsTitle = "Skills & Technologies";
+---
+<Layout>
+  <ContentWrapper>
+    <div class="flex flex-col sm:flex-row gap-8 sm:gap-12 items-start">
+      <div>
+        <h1 class="text-4xl font-extrabold text-sky-700 dark:text-sky-200 mb-4">
+          {title}
+        </h1>
+        
+        <div class="prose prose-lg dark:prose-invert text-neutral-800 dark:text-neutral-300">
+          <p>
+            {aboutIntro}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12">
+      <h2 class="text-2xl font-bold mb-4 text-sky-700 dark:text-sky-300">
+        {skillsTitle}
+      </h2>
+      <ul class="flex flex-wrap gap-3">
+        {identity.skills.map((skill) => (
+          <li class="bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-200 text-sm font-medium px-4 py-1.5 rounded-full">
+            {skill}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </ContentWrapper>
+</Layout>
