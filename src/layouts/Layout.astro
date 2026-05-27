@@ -2,17 +2,43 @@
 import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
 
-const title = "AbrahamPrz";
+const {
+  title = "AbrahamPrz",
+  description = "Personal website and blog of Abraham Perez.",
+  canonical,
+  image = "/favicon.svg",
+  lang = "en",
+} = Astro.props;
+
+const siteUrl = Astro.site ?? new URL("http://localhost:4321");
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, siteUrl).toString();
+const imageUrl = new URL(image, siteUrl).toString();
 ---
 <!doctype html>
-<html lang="en" class="">
+<html lang={lang} class="">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={imageUrl} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+
     <title>{title}</title>
-    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="/assets/fontawesome/css/fontawesome.min.css" />
+    <link rel="stylesheet" href="/assets/fontawesome/css/solid.min.css" />
+    <link rel="stylesheet" href="/assets/fontawesome/css/brands.min.css" />
 
     <script is:inline>
       const theme = (() => {

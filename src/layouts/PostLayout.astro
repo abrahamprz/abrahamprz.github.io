@@ -1,0 +1,91 @@
+---
+import Layout from "./Layout.astro";
+import ContentWrapper from "../components/ContentWrapper.astro";
+
+const { frontmatter } = Astro.props;
+const pageTitle = frontmatter?.title ? `${frontmatter.title} | AbrahamPrz` : "Blog Post | AbrahamPrz";
+const pageDescription = frontmatter?.description ?? "Blog post from AbrahamPrz.";
+const tags = Array.isArray(frontmatter?.tags)
+  ? frontmatter.tags.filter((tag) => typeof tag === "string" && tag.trim().length > 0)
+  : [];
+const displayPubDate = frontmatter?.pubDate
+  ? new Date(frontmatter.pubDate).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      timeZone: "UTC",
+    })
+  : null;
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <ContentWrapper>
+    <article class="post-content">
+      <header class="mb-8 border-b border-neutral-200 dark:border-neutral-800 pb-4">
+        {frontmatter?.title && (
+          <h1 class="text-4xl font-extrabold text-sky-700 dark:text-sky-200">{frontmatter.title}</h1>
+        )}
+        {frontmatter?.pubDate && (
+          <p class="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+            Published on: {displayPubDate}
+          </p>
+        )}
+        {tags.length > 0 && (
+          <ul class="mt-4 flex flex-wrap gap-2" aria-label="Post tags">
+            {tags.map((tag) => (
+              <li class="bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-200 text-xs font-medium px-3 py-1 rounded-full">
+                {tag}
+              </li>
+            ))}
+          </ul>
+        )}
+      </header>
+
+      <slot />
+    </article>
+  </ContentWrapper>
+</Layout>
+
+<style>
+  .post-content {
+    color: rgb(38 38 38);
+    line-height: 1.8;
+  }
+
+  :global(.dark) .post-content {
+    color: rgb(212 212 212);
+  }
+
+  .post-content :global(h1),
+  .post-content :global(h2),
+  .post-content :global(h3) {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .post-content :global(h2) {
+    font-size: 1.5rem;
+    color: rgb(3 105 161);
+  }
+
+  :global(.dark) .post-content :global(h2) {
+    color: rgb(125 211 252);
+  }
+
+  .post-content :global(p),
+  .post-content :global(ul),
+  .post-content :global(ol) {
+    margin: 1rem 0;
+  }
+
+  .post-content :global(a) {
+    color: rgb(3 105 161);
+    text-decoration: underline;
+  }
+
+  :global(.dark) .post-content :global(a) {
+    color: rgb(125 211 252);
+  }
+</style>

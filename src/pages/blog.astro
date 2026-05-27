@@ -1,24 +1,137 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ContentWrapper from '../components/ContentWrapper.astro';
+import { base } from 'astro:config/server';
 
 const title = "Blog";
-const intro = "Welcome to my blog! I'll be sharing thoughts on game development, web technologies, and other topics.";
-const placeholder = "This is a placeholder for future blog posts.";
-const comingSoon = "Coming Soon!";
+const intro = "Welcome to my not-so-serious blog, a space on the internet where I share updates on my projects and personal life.";
+const postModules = import.meta.glob('./posts/*.md', { eager: true });
+
+const posts = Object.entries(postModules)
+  .map(([path, mod]) => {
+    const slug = path.split('/').pop()?.replace('.md', '') ?? '';
+    const frontmatter = mod.frontmatter ?? {};
+    const parsedPubDate = frontmatter.pubDate ? new Date(frontmatter.pubDate) : new Date(0);
+    const tags = Array.isArray(frontmatter.tags)
+      ? frontmatter.tags.filter((tag) => typeof tag === 'string' && tag.trim().length > 0)
+      : [];
+    return {
+      slug,
+      title: frontmatter.title ?? slug,
+      description: frontmatter.description ?? '',
+      pubDate: parsedPubDate,
+      tags,
+      displayDate: parsedPubDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        timeZone: 'UTC',
+      }),
+    };
+  })
+  .sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
 ---
-<Layout>
+<Layout
+  title="AbrahamPrz | Blog"
+  description="Some blog posts made by Abraham"
+>
   <ContentWrapper>
     <h1 class="text-4xl font-extrabold text-sky-700 dark:text-sky-200 mb-2">
       {title}
     </h1>
-    <p class="text-lg text-neutral-700 dark:text-slate-300">
+    <p class="text-lg text-neutral-700 dark:text-slate-300"> 
       {intro}
-    </p>
+    </p> 
+    
+    <hr class="my-8 border-0 border-t border-neutral-200 dark:border-neutral-700" />
 
-    <div class="mt-16 text-center text-neutral-500 dark:text-neutral-400">
-      <i class="fas fa-pencil-alt fa-3x"></i>
-      <p class="mt-4 text-xl">{comingSoon}</p>
-    </div>
+    {posts.length > 0 ? (
+      <>
+        <div class="mb-6 flex justify-end">
+          <button
+            id="sort-toggle"
+            type="button"
+            data-order="newest"
+            class="inline-flex items-center gap-2 rounded-md border border-neutral-300 dark:border-neutral-700 px-3 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            aria-label="Sort posts by date"
+          >
+            <span>Sort</span>
+            <i id="sort-arrow" class="fas fa-arrow-down text-xs" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <ul id="post-list" class="space-y-6">
+        {posts.map((post) => (
+          <li
+            data-post-item
+            data-timestamp={post.pubDate.getTime()}
+          >
+            <a
+              href={base + 'posts/' + post.slug}
+              class="block p-6 border border-neutral-200 dark:border-neutral-800 rounded-lg hover:shadow-lg hover:bg-slate-50 dark:hover:bg-neutral-800/50 transition-all duration-300"
+            >
+              <h2 class="text-2xl font-semibold text-sky-700 dark:text-sky-300">
+                {post.title}
+              </h2>
+              <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+                {post.displayDate}
+              </p>
+              {post.description && (
+                <p class="text-neutral-700 dark:text-neutral-300 mt-3">
+                  {post.description}
+                </p>
+              )}
+              {post.tags.length > 0 && (
+                <ul class="mt-4 flex flex-wrap gap-2" aria-label="Post tags">
+                  {post.tags.map((tag) => (
+                    <li class="bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-200 text-xs font-medium px-3 py-1 rounded-full">
+                      {tag}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </a>
+          </li>
+        ))}
+        </ul>
+      </>
+    ) : (
+      <div class="mt-16 text-center text-neutral-500 dark:text-neutral-400">
+        <i class="fas fa-pencil-alt fa-3x"></i>
+        <p class="mt-4 text-xl">No posts yet.</p>
+      </div>
+    )}
+
+    <script>
+      const postList = document.getElementById('post-list');
+      const sortToggle = document.getElementById('sort-toggle');
+      const sortArrow = document.getElementById('sort-arrow');
+
+      if (postList && sortToggle && sortArrow) {
+        const postItems = Array.from(postList.querySelectorAll('[data-post-item]'));
+
+        function applySort(order) {
+          const sortedItems = [...postItems].sort((a, b) => {
+            const aTime = Number(a.dataset.timestamp ?? 0);
+            const bTime = Number(b.dataset.timestamp ?? 0);
+            return order === 'oldest' ? aTime - bTime : bTime - aTime;
+          });
+
+          sortedItems.forEach((item) => postList.appendChild(item));
+          sortArrow.className = order === 'oldest'
+            ? 'fas fa-arrow-up text-xs'
+            : 'fas fa-arrow-down text-xs';
+          sortToggle.setAttribute('data-order', order);
+        }
+
+        sortToggle.addEventListener('click', () => {
+          const currentOrder = sortToggle.getAttribute('data-order') ?? 'newest';
+          const nextOrder = currentOrder === 'newest' ? 'oldest' : 'newest';
+          applySort(nextOrder);
+        });
+
+        applySort('newest');
+      }
+    </script>
   </ContentWrapper>
 </Layout>

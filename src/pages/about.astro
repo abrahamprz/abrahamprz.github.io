@@ -9,18 +9,22 @@ const identity = {
   country: "the United States",
   profession: "Computer Engineer",
   hobbies: ["coding", "gaming", "music", "game development"],
-  skills: ["Python", "Django", "Godot", "Lua", "Docker"],
+  skills: ["Godot", "GDScript", "Lua", "Love2D", "Pico-8", "Python", "Django", "Docker"],
+  learning: ["Pixel art", "Digital art"],
 }
 const title = "About me";
 const aboutIntro = `
   Hello! I'm ${identity.middleName} Perez, a ${identity.profession} based in ${identity.country} 
-  with a passion for game development, art, and web technologies. 
-  When I'm not coding, I enjoy ${identity.hobbies.slice(0, -1).join(", ")}, and ${identity.hobbies.slice(-1)}. 
-  I'm always eager to learn new things and take on challenging projects.
+  with a passion for game development and art.
+  I like those things because they involve creating stuff, and I believe creating is the best thing we can do.
 `;
-const skillsTitle = "Skills & Technologies";
+const skillsTitle = "Stuff I use";
+const learningTitle = "Currently learning";
 ---
-<Layout>
+<Layout
+  title="AbrahamPrz | About"
+  description="Learn more about me, Abraham."
+>
   <ContentWrapper>
     <div class="flex flex-col sm:flex-row gap-8 sm:gap-12 items-start">
       <div>
@@ -44,6 +48,19 @@ const skillsTitle = "Skills & Technologies";
         {identity.skills.map((skill) => (
           <li class="bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-200 text-sm font-medium px-4 py-1.5 rounded-full">
             {skill}
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="mt-8">
+      <h2 class="text-2xl font-bold mb-4 text-sky-700 dark:text-sky-300">
+        {learningTitle}
+      </h2>
+      <ul class="flex flex-wrap gap-3">
+        {identity.learning.map((item) => (
+          <li class="bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 text-sm font-medium px-4 py-1.5 rounded-full">
+            {item}
           </li>
         ))}
       </ul>
