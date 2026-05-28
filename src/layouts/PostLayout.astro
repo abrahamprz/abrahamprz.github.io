@@ -1,19 +1,26 @@
 ---
 import Layout from "./Layout.astro";
 import ContentWrapper from "../components/ContentWrapper.astro";
+import { AUTHOR_LOCALE, AUTHOR_TIME_ZONE, SITE_NAME, BLOG_POST_DEFAULT_DESCRIPTION } from "../config/site.mjs";
 
 const { frontmatter } = Astro.props;
-const pageTitle = frontmatter?.title ? `${frontmatter.title} | AbrahamPrz` : "Blog Post | AbrahamPrz";
-const pageDescription = frontmatter?.description ?? "Blog post from AbrahamPrz.";
-const tags = Array.isArray(frontmatter?.tags)
-  ? frontmatter.tags.filter((tag) => typeof tag === "string" && tag.trim().length > 0)
-  : [];
+const pageTitle = frontmatter?.title ? `${frontmatter.title} | ${SITE_NAME}` : `Blog Post | ${SITE_NAME}`;
+const pageDescription = frontmatter?.description ?? BLOG_POST_DEFAULT_DESCRIPTION;
+const tags: string[] = [];
+
+if (Array.isArray(frontmatter?.tags)) {
+  for (const rawTag of frontmatter.tags) {
+    if (typeof rawTag === "string" && rawTag.trim().length > 0) {
+      tags.push(rawTag);
+    }
+  }
+}
 const displayPubDate = frontmatter?.pubDate
-  ? new Date(frontmatter.pubDate).toLocaleDateString("en-US", {
+  ? new Date(frontmatter.pubDate).toLocaleDateString(AUTHOR_LOCALE, {
       year: "numeric",
       month: "long",
       day: "numeric",
-      timeZone: "UTC",
+      timeZone: AUTHOR_TIME_ZONE,
     })
   : null;
 ---

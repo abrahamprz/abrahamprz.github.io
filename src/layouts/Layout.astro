@@ -1,10 +1,11 @@
 ---
 import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
+import { SITE_NAME, SITE_DEFAULT_DESCRIPTION } from "../config/site.mjs";
 
 const {
-  title = "AbrahamPrz",
-  description = "Personal website and blog of Abraham Perez.",
+  title = SITE_NAME,
+  description = SITE_DEFAULT_DESCRIPTION,
   canonical,
   image = "/favicon.svg",
   lang = "en",

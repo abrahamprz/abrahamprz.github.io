@@ -2,18 +2,36 @@
 import Layout from '../layouts/Layout.astro';
 import ContentWrapper from '../components/ContentWrapper.astro';
 import { base } from 'astro:config/server';
+import { AUTHOR_LOCALE, AUTHOR_TIME_ZONE, SITE_NAME, BLOG_PAGE_TITLE, BLOG_PAGE_DESCRIPTION } from '../config/site.mjs';
 
-const title = "Blog";
+const title = BLOG_PAGE_TITLE;
 const intro = "Welcome to my not-so-serious blog, a space on the internet where I share updates on my projects and personal life.";
 const postModules = import.meta.glob('./posts/*.md', { eager: true });
+
+type PostFrontmatter = {
+  title?: string;
+  description?: string;
+  pubDate?: string;
+  tags?: unknown[];
+};
+
+type PostModule = {
+  frontmatter?: PostFrontmatter;
+};
+
+const sortOptions = {
+  newest: { label: 'Newest to oldest' },
+  oldest: { label: 'Oldest to newest' },
+};
 
 const posts = Object.entries(postModules)
   .map(([path, mod]) => {
     const slug = path.split('/').pop()?.replace('.md', '') ?? '';
-    const frontmatter = mod.frontmatter ?? {};
+    const typedModule = mod as PostModule;
+    const frontmatter = typedModule.frontmatter ?? {};
     const parsedPubDate = frontmatter.pubDate ? new Date(frontmatter.pubDate) : new Date(0);
     const tags = Array.isArray(frontmatter.tags)
-      ? frontmatter.tags.filter((tag) => typeof tag === 'string' && tag.trim().length > 0)
+      ? frontmatter.tags.filter((tag): tag is string => typeof tag === 'string' && tag.trim().length > 0)
       : [];
     return {
       slug,
@@ -21,19 +39,23 @@ const posts = Object.entries(postModules)
       description: frontmatter.description ?? '',
       pubDate: parsedPubDate,
       tags,
-      displayDate: parsedPubDate.toLocaleDateString('en-US', {
+      displayDate: parsedPubDate.toLocaleDateString(AUTHOR_LOCALE, {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
-        timeZone: 'UTC',
+        timeZone: AUTHOR_TIME_ZONE,
       }),
     };
   })
-  .sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
+  .sort((a, b) => {
+    const timeDiff = b.pubDate.getTime() - a.pubDate.getTime();
+    if (timeDiff !== 0) return timeDiff;
+    return a.slug.localeCompare(b.slug);
+  });
 ---
 <Layout
-  title="AbrahamPrz | Blog"
-  description="Some blog posts made by Abraham"
+  title={`${SITE_NAME} | ${BLOG_PAGE_TITLE}`}
+  description={BLOG_PAGE_DESCRIPTION}
 >
   <ContentWrapper>
     <h1 class="text-4xl font-extrabold text-sky-700 dark:text-sky-200 mb-2">
@@ -52,10 +74,11 @@ const posts = Object.entries(postModules)
             id="sort-toggle"
             type="button"
             data-order="newest"
+            data-sort-options={JSON.stringify(sortOptions)}
             class="inline-flex items-center gap-2 rounded-md border border-neutral-300 dark:border-neutral-700 px-3 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
             aria-label="Sort posts by date"
           >
-            <span>Sort</span>
+            <span id="sort-label">{sortOptions.newest.label}</span>
             <i id="sort-arrow" class="fas fa-arrow-down text-xs" aria-hidden="true"></i>
           </button>
         </div>
@@ -65,6 +88,7 @@ const posts = Object.entries(postModules)
           <li
             data-post-item
             data-timestamp={post.pubDate.getTime()}
+            data-slug={post.slug}
           >
             <a
               href={base + 'posts/' + post.slug}
@@ -105,32 +129,51 @@ const posts = Object.entries(postModules)
     <script>
       const postList = document.getElementById('post-list');
       const sortToggle = document.getElementById('sort-toggle');
+      const sortLabel = document.getElementById('sort-label');
       const sortArrow = document.getElementById('sort-arrow');
 
-      if (postList && sortToggle && sortArrow) {
-        const postItems = Array.from(postList.querySelectorAll('[data-post-item]'));
+      if (postList && sortToggle && sortLabel && sortArrow) {
+        const list = postList;
+        const toggle = sortToggle;
+        const label = sortLabel;
+        const arrow = sortArrow;
+        const options = JSON.parse(toggle.getAttribute('data-sort-options') ?? '{}');
+        const postItems = Array.from(list.querySelectorAll('[data-post-item]'));
 
-        function applySort(order) {
+        function applySort() {
+          const order = toggle.getAttribute('data-order') === 'oldest' ? 'oldest' : 'newest';
           const sortedItems = [...postItems].sort((a, b) => {
-            const aTime = Number(a.dataset.timestamp ?? 0);
-            const bTime = Number(b.dataset.timestamp ?? 0);
-            return order === 'oldest' ? aTime - bTime : bTime - aTime;
+            const aTime = Number(a.getAttribute('data-timestamp') ?? 0);
+            const bTime = Number(b.getAttribute('data-timestamp') ?? 0);
+            if (aTime !== bTime) {
+              return order === 'oldest' ? aTime - bTime : bTime - aTime;
+            }
+
+            const aSlug = a.getAttribute('data-slug') ?? '';
+            const bSlug = b.getAttribute('data-slug') ?? '';
+            return order === 'oldest'
+              ? aSlug.localeCompare(bSlug)
+              : bSlug.localeCompare(aSlug);
           });
 
-          sortedItems.forEach((item) => postList.appendChild(item));
-          sortArrow.className = order === 'oldest'
+          sortedItems.forEach((item) => list.appendChild(item));
+          label.textContent = options[order]?.label ?? options.newest?.label ?? 'Newest to oldest';
+          arrow.className = order === 'oldest'
             ? 'fas fa-arrow-up text-xs'
             : 'fas fa-arrow-down text-xs';
-          sortToggle.setAttribute('data-order', order);
+          toggle.setAttribute('aria-label', `Sort posts by date: ${label.textContent}`);
+          toggle.setAttribute('data-order', order);
         }
 
-        sortToggle.addEventListener('click', () => {
-          const currentOrder = sortToggle.getAttribute('data-order') ?? 'newest';
+        toggle.addEventListener('click', () => {
+          const currentOrder = toggle.getAttribute('data-order') ?? 'newest';
           const nextOrder = currentOrder === 'newest' ? 'oldest' : 'newest';
-          applySort(nextOrder);
+          toggle.setAttribute('data-order', nextOrder);
+          applySort();
         });
 
-        applySort('newest');
+        toggle.setAttribute('data-order', 'newest');
+        applySort();
       }
     </script>
   </ContentWrapper>

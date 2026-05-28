@@ -2,7 +2,13 @@
 import Layout from '../layouts/Layout.astro';
 import ContentWrapper from '../components/ContentWrapper.astro';
 
-const githubProjects = [
+interface Project {
+  title: string;
+  description: string;
+  url: string;
+}
+
+const githubProjects: Project[] = [
   // {
   //   title: "Project One",
   //   description: "Description for project one.",
@@ -10,7 +16,7 @@ const githubProjects = [
   // },
 ];
 
-const pico8Projects = [
+const pico8Projects: Project[] = [
   // {
   //   title: "Pico-8 Game One",
   //   description: "Description for Pico-8 game one.",

@@ -2,35 +2,36 @@
 import {
 	base,
 } from "astro:config/server";
+import { SOCIAL_URLS } from "../config/site.mjs";
 
 const socialLinks = [
   {
     label: "GitHub",
-    url: "https://github.com/abrahamprz",
+    url: SOCIAL_URLS.github,
     iconClass: "fab fa-github",
     hoverClass: "hover:text-gray-800 dark:hover:text-white",
   },
   {
     label: "LinkedIn",
-    url: "https://www.linkedin.com/in/fcoabrahamprz/",
+    url: SOCIAL_URLS.linkedin,
     iconClass: "fab fa-linkedin",
     hoverClass: "hover:text-blue-600 dark:hover:text-blue-500",
   },
   {
     label: "Lexaloffle (PICO-8)",
-    url: "https://www.lexaloffle.com/bbs/",
+    url: SOCIAL_URLS.lexaloffle,
     iconClass: "fas fa-gamepad",
     hoverClass: "hover:text-amber-500 dark:hover:text-amber-400",
   },
   {
     label: "itch.io",
-    url: "https://abrahamprz.itch.io",
+    url: SOCIAL_URLS.itchio,
     iconClass: "fab fa-itch-io",
     hoverClass: "hover:text-red-600 dark:hover:text-red-500",
   },
   {
     label: "Lospec",
-    url: "https://lospec.com/abrahamprz",
+    url: SOCIAL_URLS.lospec,
     iconClass: "fas fa-palette",
     hoverClass: "hover:text-emerald-600 dark:hover:text-emerald-400",
   },
