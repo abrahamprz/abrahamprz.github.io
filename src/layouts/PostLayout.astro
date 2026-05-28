@@ -2,6 +2,7 @@
 import Layout from "./Layout.astro";
 import ContentWrapper from "../components/ContentWrapper.astro";
 import { AUTHOR_LOCALE, AUTHOR_TIME_ZONE, SITE_NAME, BLOG_POST_DEFAULT_DESCRIPTION } from "../config/site.mjs";
+import { base } from "astro:config/server";
 
 const { frontmatter } = Astro.props;
 const pageTitle = frontmatter?.title ? `${frontmatter.title} | ${SITE_NAME}` : `Blog Post | ${SITE_NAME}`;
@@ -22,6 +23,42 @@ const displayPubDate = frontmatter?.pubDate
       day: "numeric",
       timeZone: AUTHOR_TIME_ZONE,
     })
+  : null;
+
+type PostFrontmatter = {
+  title?: string;
+  pubDate?: string;
+};
+
+type PostModule = {
+  frontmatter?: PostFrontmatter;
+};
+
+const postModules = import.meta.glob("../pages/posts/*.md", { eager: true });
+const currentSlug = Astro.url.pathname.split("/").filter(Boolean).pop() ?? "";
+
+const orderedPosts = Object.entries(postModules)
+  .map(([path, mod]) => {
+    const typedModule = mod as PostModule;
+    const slug = path.split("/").pop()?.replace(".md", "") ?? "";
+    const parsedDate = typedModule.frontmatter?.pubDate ? new Date(typedModule.frontmatter.pubDate) : new Date(0);
+
+    return {
+      slug,
+      title: typedModule.frontmatter?.title ?? slug,
+      pubDate: parsedDate,
+    };
+  })
+  .sort((a, b) => {
+    const timeDiff = a.pubDate.getTime() - b.pubDate.getTime();
+    if (timeDiff !== 0) return timeDiff;
+    return a.slug.localeCompare(b.slug);
+  });
+
+const currentIndex = orderedPosts.findIndex((post) => post.slug === currentSlug);
+const previousPost = currentIndex > 0 ? orderedPosts[currentIndex - 1] : null;
+const nextPost = currentIndex >= 0 && currentIndex < orderedPosts.length - 1
+  ? orderedPosts[currentIndex + 1]
   : null;
 ---
 
@@ -49,6 +86,40 @@ const displayPubDate = frontmatter?.pubDate
       </header>
 
       <slot />
+
+      {(previousPost || nextPost) && (
+        <nav class="mt-10 flex items-center justify-between gap-4 border-t border-neutral-200 dark:border-neutral-800 pt-6" aria-label="Post navigation">
+          <div class="w-10">
+            {previousPost ? (
+              <a
+                href={`${base}posts/${previousPost.slug}`}
+                class="post-nav-link inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-300 dark:border-neutral-700 transition-colors"
+                aria-label={`Previous post: ${previousPost.title}`}
+                title={previousPost.title}
+              >
+                <i class="fas fa-chevron-left text-sm" aria-hidden="true"></i>
+              </a>
+            ) : (
+              <span></span>
+            )}
+          </div>
+
+          <div class="w-10 text-right">
+            {nextPost ? (
+              <a
+                href={`${base}posts/${nextPost.slug}`}
+                class="post-nav-link inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-300 dark:border-neutral-700 transition-colors"
+                aria-label={`Next post: ${nextPost.title}`}
+                title={nextPost.title}
+              >
+                <i class="fas fa-chevron-right text-sm" aria-hidden="true"></i>
+              </a>
+            ) : (
+              <span></span>
+            )}
+          </div>
+        </nav>
+      )}
     </article>
   </ContentWrapper>
 </Layout>
@@ -90,6 +161,25 @@ const displayPubDate = frontmatter?.pubDate
   .post-content :global(a) {
     color: rgb(3 105 161);
     text-decoration: underline;
+  }
+
+  .post-content :global(.post-nav-link) {
+    color: rgb(82 82 82);
+    text-decoration: none;
+  }
+
+  .post-content :global(.post-nav-link:hover) {
+    color: rgb(23 23 23);
+    background-color: rgb(245 245 245);
+  }
+
+  :global(.dark) .post-content :global(.post-nav-link) {
+    color: rgb(212 212 212);
+  }
+
+  :global(.dark) .post-content :global(.post-nav-link:hover) {
+    color: rgb(250 250 250);
+    background-color: rgb(38 38 38);
   }
 
   :global(.dark) .post-content :global(a) {

@@ -11,8 +11,8 @@ export const BLOG_PAGE_DESCRIPTION = 'Some blog posts made by Abraham';
 export const BLOG_POST_DEFAULT_DESCRIPTION = 'Blog post from AbrahamPrz.';
 
 export const DEFAULT_POST_AUTHOR = 'Abraham';
-export const DEFAULT_POST_DESCRIPTION = 'Add a short description here.';
-export const DEFAULT_POST_TAGS = ['personal'];
+export const DEFAULT_POST_DESCRIPTION = 'TODO: POST DESCRIPTION.';
+export const DEFAULT_POST_TAGS = ['TODO: TAGS'];
 
 export const SOCIAL_URLS = {
 	github: 'https://github.com/abrahamprz',
