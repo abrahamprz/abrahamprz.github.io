@@ -69,7 +69,17 @@ const posts = Object.entries(postModules)
 
     {posts.length > 0 ? (
       <>
-        <div class="mb-6 flex justify-end">
+        <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <label class="relative w-full sm:max-w-md" for="post-search">
+            <span class="sr-only">Search posts</span>
+            <input
+              id="post-search"
+              type="search"
+              placeholder="Search by title, description, or tag..."
+              class="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2 text-sm text-neutral-800 dark:text-neutral-100 placeholder:text-neutral-500 dark:placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
+            />
+          </label>
+
           <button
             id="sort-toggle"
             type="button"
@@ -89,6 +99,7 @@ const posts = Object.entries(postModules)
             data-post-item
             data-timestamp={post.pubDate.getTime()}
             data-slug={post.slug}
+            data-search={`${post.title} ${post.description} ${post.tags.join(' ')}`.toLowerCase()}
           >
             <a
               href={base + 'posts/' + post.slug}
@@ -118,6 +129,10 @@ const posts = Object.entries(postModules)
           </li>
         ))}
         </ul>
+
+        <p id="search-empty" class="hidden text-sm text-neutral-500 dark:text-neutral-400 mt-4">
+          No posts match your search.
+        </p>
       </>
     ) : (
       <div class="mt-16 text-center text-neutral-500 dark:text-neutral-400">
@@ -128,52 +143,73 @@ const posts = Object.entries(postModules)
 
     <script>
       const postList = document.getElementById('post-list');
+      const postSearch = document.getElementById('post-search');
+      const searchEmpty = document.getElementById('search-empty');
       const sortToggle = document.getElementById('sort-toggle');
       const sortLabel = document.getElementById('sort-label');
       const sortArrow = document.getElementById('sort-arrow');
 
-      if (postList && sortToggle && sortLabel && sortArrow) {
+      if (postList && postSearch && searchEmpty && sortToggle && sortLabel && sortArrow) {
         const list = postList;
+        const search = postSearch;
+        const empty = searchEmpty;
         const toggle = sortToggle;
         const label = sortLabel;
         const arrow = sortArrow;
-        const options = JSON.parse(toggle.getAttribute('data-sort-options') ?? '{}');
-        const postItems = Array.from(list.querySelectorAll('[data-post-item]'));
+        if (search instanceof HTMLInputElement) {
+          const searchInput = search;
+          const options = JSON.parse(toggle.getAttribute('data-sort-options') ?? '{}');
+          const postItems = Array.from(list.querySelectorAll('[data-post-item]'));
 
-        function applySort() {
-          const order = toggle.getAttribute('data-order') === 'oldest' ? 'oldest' : 'newest';
-          const sortedItems = [...postItems].sort((a, b) => {
-            const aTime = Number(a.getAttribute('data-timestamp') ?? 0);
-            const bTime = Number(b.getAttribute('data-timestamp') ?? 0);
-            if (aTime !== bTime) {
-              return order === 'oldest' ? aTime - bTime : bTime - aTime;
-            }
+          function applyFiltersAndSort() {
+            const order = toggle.getAttribute('data-order') === 'oldest' ? 'oldest' : 'newest';
+            const query = searchInput.value.trim().toLowerCase();
+            const shouldFilter = query.length > 0;
+            const filteredItems = postItems.filter((item) => {
+              const searchText = (item.getAttribute('data-search') ?? '').toLowerCase();
+              return !shouldFilter || searchText.includes(query);
+            });
 
-            const aSlug = a.getAttribute('data-slug') ?? '';
-            const bSlug = b.getAttribute('data-slug') ?? '';
-            return order === 'oldest'
-              ? aSlug.localeCompare(bSlug)
-              : bSlug.localeCompare(aSlug);
+            const sortedItems = [...filteredItems].sort((a, b) => {
+              const aTime = Number(a.getAttribute('data-timestamp') ?? 0);
+              const bTime = Number(b.getAttribute('data-timestamp') ?? 0);
+              if (aTime !== bTime) {
+                return order === 'oldest' ? aTime - bTime : bTime - aTime;
+              }
+
+              const aSlug = a.getAttribute('data-slug') ?? '';
+              const bSlug = b.getAttribute('data-slug') ?? '';
+              return order === 'oldest'
+                ? aSlug.localeCompare(bSlug)
+                : bSlug.localeCompare(aSlug);
+            });
+
+            postItems.forEach((item) => item.classList.add('hidden'));
+
+            sortedItems.forEach((item) => list.appendChild(item));
+            sortedItems.forEach((item) => item.classList.remove('hidden'));
+
+            empty.classList.toggle('hidden', !shouldFilter || sortedItems.length > 0);
+            label.textContent = options[order]?.label ?? options.newest?.label ?? 'Newest to oldest';
+            arrow.className = order === 'oldest'
+              ? 'fas fa-arrow-up text-xs'
+              : 'fas fa-arrow-down text-xs';
+            toggle.setAttribute('aria-label', `Sort posts by date: ${label.textContent}`);
+            toggle.setAttribute('data-order', order);
+          }
+
+          toggle.addEventListener('click', () => {
+            const currentOrder = toggle.getAttribute('data-order') ?? 'newest';
+            const nextOrder = currentOrder === 'newest' ? 'oldest' : 'newest';
+            toggle.setAttribute('data-order', nextOrder);
+            applyFiltersAndSort();
           });
 
-          sortedItems.forEach((item) => list.appendChild(item));
-          label.textContent = options[order]?.label ?? options.newest?.label ?? 'Newest to oldest';
-          arrow.className = order === 'oldest'
-            ? 'fas fa-arrow-up text-xs'
-            : 'fas fa-arrow-down text-xs';
-          toggle.setAttribute('aria-label', `Sort posts by date: ${label.textContent}`);
-          toggle.setAttribute('data-order', order);
+          searchInput.addEventListener('input', applyFiltersAndSort);
+
+          toggle.setAttribute('data-order', 'newest');
+          applyFiltersAndSort();
         }
-
-        toggle.addEventListener('click', () => {
-          const currentOrder = toggle.getAttribute('data-order') ?? 'newest';
-          const nextOrder = currentOrder === 'newest' ? 'oldest' : 'newest';
-          toggle.setAttribute('data-order', nextOrder);
-          applySort();
-        });
-
-        toggle.setAttribute('data-order', 'newest');
-        applySort();
       }
     </script>
   </ContentWrapper>
