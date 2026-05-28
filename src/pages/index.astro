@@ -8,18 +8,6 @@ const identity = {
   profession: "Computer Engineer",
   workAreasInterest: ["game development"],
 };
-const socialLinks = {
-  github: {
-    label: "GitHub",
-    url: "https://github.com/abrahamprz",
-    hoverColor: "hover:text-gray-800 dark:hover:text-white"
-  },
-  linkedin: {
-    label: "LinkedIn",
-    url: "https://www.linkedin.com/in/fcoabrahamprz/",
-    hoverColor: "hover:text-blue-600 dark:hover:text-blue-500",
-  },
-}
 ---
 <Layout
   title="AbrahamPrz | Home"
@@ -34,23 +22,6 @@ const socialLinks = {
       <p class="text-lg text-neutral-700 dark:text-slate-200 max-w-xl mb-8">
         {identity.profession} interested in {identity.workAreasInterest.join(", ")}.
       </p>
-
-      <div class="flex gap-6">
-        {
-          Object.entries(socialLinks).map(([key, link]) => (
-            <a 
-              href={link.url} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              aria-label={link.label}
-            >
-              <i 
-                class={`fab fa-${key} fa-2x text-neutral-600 dark:text-neutral-400 transition-all hover:scale-110 ${link.hoverColor}`}
-              ></i>
-            </a>
-          ))
-        }
-      </div>
     </main>
   </div>
 </Layout>

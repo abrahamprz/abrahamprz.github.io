@@ -2,14 +2,58 @@
 import {
 	base,
 } from "astro:config/server";
----
-<nav class="w-full relative flex flex-wrap items-center justify-center gap-4 sm:gap-6 py-4 pl-4 pr-20 sm:px-8 text-sm sm:text-base">
-  <a href={base} class="hover:underline">Home</a>
-  <a href={base + "projects"} class="hover:underline">Projects</a>
-  <a href={base + "about"} class="hover:underline">About</a>
-  <a href={base + "blog"} class="hover:underline">Blog</a>
 
-  <div class="absolute right-4 top-1/2 -translate-y-1/2 sm:right-8">
+const socialLinks = [
+  {
+    label: "GitHub",
+    url: "https://github.com/abrahamprz",
+    iconClass: "fab fa-github",
+    hoverClass: "hover:text-gray-800 dark:hover:text-white",
+  },
+  {
+    label: "LinkedIn",
+    url: "https://www.linkedin.com/in/fcoabrahamprz/",
+    iconClass: "fab fa-linkedin",
+    hoverClass: "hover:text-blue-600 dark:hover:text-blue-500",
+  },
+  {
+    label: "Lexaloffle (PICO-8)",
+    url: "https://www.lexaloffle.com/bbs/",
+    iconClass: "fas fa-gamepad",
+    hoverClass: "hover:text-amber-500 dark:hover:text-amber-400",
+  },
+  {
+    label: "itch.io",
+    url: "https://abrahamprz.itch.io",
+    iconClass: "fab fa-itch-io",
+    hoverClass: "hover:text-red-600 dark:hover:text-red-500",
+  },
+];
+---
+<nav class="w-full flex flex-wrap items-center justify-between gap-4 py-4 px-4 sm:px-8 text-sm sm:text-base">
+  <div class="flex flex-wrap items-center gap-4 sm:gap-6">
+    <a href={base} class="hover:underline">Home</a>
+    <a href={base + "projects"} class="hover:underline">Projects</a>
+    <a href={base + "about"} class="hover:underline">About</a>
+    <a href={base + "blog"} class="hover:underline">Blog</a>
+  </div>
+
+  <div class="flex items-center gap-3 sm:gap-4">
+    {
+      socialLinks.map((link) => (
+        <a
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={link.label}
+          title={link.label}
+          class={`text-base sm:text-lg text-neutral-700 dark:text-neutral-300 transition-all hover:scale-110 ${link.hoverClass}`}
+        >
+          <i class={link.iconClass}></i>
+        </a>
+      ))
+    }
+
     <button
       id="theme-toggle"
       type="button"
@@ -32,7 +76,11 @@ import {
   const thumb = document.getElementById('toggle-thumb');
   const icon = document.getElementById('toggle-icon');
 
-  function updateToggleUI(isDark) {
+  function updateToggleUI() {
+    if (!thumb || !icon) return;
+
+    const isDark = html.classList.contains('dark');
+
     if (isDark) {
       thumb.style.transform = 'translateX(24px)';
       icon.className = 'fas fa-moon text-yellow-400';
@@ -42,16 +90,19 @@ import {
     }
   }
 
-  const initialIsDark = html.classList.contains('dark');
-  updateToggleUI(initialIsDark);
+  updateToggleUI();
 
-  requestAnimationFrame(() => {
-    thumb.classList.add('transition-transform', 'duration-300');
-  });
+  if (thumb) {
+    requestAnimationFrame(() => {
+      thumb.classList.add('transition-transform', 'duration-300');
+    });
+  }
 
-  btn.addEventListener('click', () => {
-    const isDark = html.classList.toggle('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    updateToggleUI(isDark);
-  });
+  if (btn) {
+    btn.addEventListener('click', () => {
+      const isDark = html.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      updateToggleUI();
+    });
+  }
 </script>
